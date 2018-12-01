@@ -15,7 +15,7 @@ def get_sum_of_frequencies(numbers):
 def get_first_frequency_listed_twice(numbers):
     """
         Given a list of frequencies (positive and negative)
-        What is the first frequency listed twice
+        What is the first cumulative frequency seen twice
     """
     seen_so_far = set([0])
     for running_total in accumulate(cycle(numbers)):
