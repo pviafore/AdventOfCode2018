@@ -21,4 +21,4 @@ def get_transformed_input(input_filename, transform_function):
         transform_function
     """
     with open(input_filename) as input_file:
-        return [transform_function(line).strip() for line in input_file.readlines()]
+        return [transform_function(line.strip()) for line in input_file.readlines()]

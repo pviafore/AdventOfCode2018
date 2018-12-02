@@ -39,7 +39,7 @@ def get_number_of_boxes_with_exact_letters(grouped_box_ids, desired_count):
 
 def contains_desired_count(box, desired_count):
     """
-        If the box has exatly 'desired_count` of any one letter
+        If the box has exactly 'desired_count` of any one letter
     """
     return any(group for _, group in box if len(group) == desired_count)
 
@@ -47,8 +47,8 @@ def get_common_letters_from_correct_boxes(box_ids):
     """
         Get the common letters from the correct boxes
     """
-    _box1, _box2, common_letters = get_correct_boxes(box_ids)
-    return common_letters 
+    box1, box2 = get_correct_boxes(box_ids)
+    return get_common_letters(box1, box2)
 
 def get_correct_boxes(box_ids):
     """
@@ -57,18 +57,18 @@ def get_correct_boxes(box_ids):
     box_pairs = combinations(box_ids, 2)
 
     # get the common letters for each box so that we can see which ones are only one off
-    candidates = [(box1, box2, get_common_letters(box1, box2)) for box1, box2 in box_pairs]
     try:
-        return next(candidate for candidate in candidates if is_off_by_one_letter(candidate))
+        return next(candidate for candidate in box_pairs if is_off_by_one_letter(candidate))
     except StopIteration:
+        # provide a better error message to the user
         assert False, "We did not find a suitable answer in the input"
 
 def is_off_by_one_letter(candidate):
     """
         Return true if the boxes are off by one letter
     """
-    box1, _, common_letters = candidate
-    return len(common_letters) == len(box1) - 1
+    box1, box2 = candidate
+    return len(get_common_letters(box1, box2)) == len(box1) - 1
 
 def get_common_letters(box1, box2):
     """
