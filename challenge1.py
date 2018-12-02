@@ -29,6 +29,6 @@ def get_first_frequency_listed_twice(numbers):
 
 
 
-NUMBERS = read_numbers("input1.txt")
+NUMBERS = read_numbers("input/input1.txt")
 print(get_sum_of_frequencies(NUMBERS))
 print(get_first_frequency_listed_twice(NUMBERS))
