@@ -78,5 +78,7 @@ def get_common_letters(box1, box2):
 
 # We sort and groupby to make it easier to find out how many of each letter there is
 BOX_IDS = read_strings("input/input2.txt")
-print(get_checksum(BOX_IDS))
-print(get_common_letters_from_correct_boxes(BOX_IDS))
+
+if __name__ == "__main__":
+    print(get_checksum(BOX_IDS))
+    print(get_common_letters_from_correct_boxes(BOX_IDS))
