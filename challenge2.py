@@ -1,7 +1,7 @@
 """
     Advent of Code Day 2
 """
-from itertools import groupby, product
+from itertools import groupby, combinations
 
 from common.input_file import read_strings
 
@@ -54,11 +54,10 @@ def get_correct_boxes(box_ids):
     """
         Get the pair of correct boxes
     """
-    box_pairs = product(box_ids, box_ids)
-    unique_pairs = [(box1, box2) for box1, box2 in box_pairs if box1 < box2]
+    box_pairs = combinations(box_ids, 2)
 
     # get the common letters for each box so that we can see which ones are only one off
-    candidates = [(box1, box2, get_common_letters(box1, box2)) for box1, box2 in unique_pairs]
+    candidates = [(box1, box2, get_common_letters(box1, box2)) for box1, box2 in box_pairs]
     try:
         return next(candidate for candidate in candidates if is_off_by_one_letter(candidate))
     except StopIteration:
