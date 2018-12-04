@@ -16,3 +16,10 @@ def test_day3():
                             get_non_overlapping_claim)
     assert get_number_of_overlapping_squares(CLAIMED_SQUARES) == 98005
     assert get_non_overlapping_claim(CLAIMS, CLAIMED_SQUARES) == "#331 "
+
+def test_day4():
+    from challenge4 import (GUARDS,
+                            get_most_likely_to_sleep_guard_strategy_1,
+                            get_most_likely_to_sleep_guard_strategy_2)
+    assert get_most_likely_to_sleep_guard_strategy_1(GUARDS) == 95199
+    assert get_most_likely_to_sleep_guard_strategy_2(GUARDS) == 7887

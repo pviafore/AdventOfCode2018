@@ -17,6 +17,7 @@ def transform_input(box_id):
 
     return [(key, list(group)) for key, group in grouped_box_id]
 
+
 def get_checksum(box_ids):
     """
         Get the checksum of all the box IDs
@@ -27,15 +28,18 @@ def get_checksum(box_ids):
     return (
         get_number_of_boxes_with_exact_letters(grouped_box_ids, 2) *
         get_number_of_boxes_with_exact_letters(grouped_box_ids, 3)
-        )
+    )
+
 
 def get_number_of_boxes_with_exact_letters(grouped_box_ids, desired_count):
     """
         Gets the count of boxes where we have exactly `desired_count`
         number of one letter in it
     """
-    candidates = [True for box in grouped_box_ids if contains_desired_count(box, desired_count)]
+    candidates = [
+        True for box in grouped_box_ids if contains_desired_count(box, desired_count)]
     return len(candidates)
+
 
 def contains_desired_count(box, desired_count):
     """
@@ -43,12 +47,14 @@ def contains_desired_count(box, desired_count):
     """
     return any(group for _, group in box if len(group) == desired_count)
 
+
 def get_common_letters_from_correct_boxes(box_ids):
     """
         Get the common letters from the correct boxes
     """
     box1, box2 = get_correct_boxes(box_ids)
     return get_common_letters(box1, box2)
+
 
 def get_correct_boxes(box_ids):
     """
@@ -63,6 +69,7 @@ def get_correct_boxes(box_ids):
         # provide a better error message to the user
         assert False, "We did not find a suitable answer in the input"
 
+
 def is_off_by_one_letter(candidate):
     """
         Return true if the boxes are off by one letter
@@ -70,11 +77,13 @@ def is_off_by_one_letter(candidate):
     box1, box2 = candidate
     return len(get_common_letters(box1, box2)) == len(box1) - 1
 
+
 def get_common_letters(box1, box2):
     """
         Get the letters in common between two boxes
     """
     return "".join([letter1 for letter1, letter2 in zip(box1, box2) if letter1 == letter2])
+
 
 # We sort and groupby to make it easier to find out how many of each letter there is
 BOX_IDS = read_strings("input/input2.txt")
