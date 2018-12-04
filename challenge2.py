@@ -1,29 +1,17 @@
 """
     Advent of Code Day 2
 """
-from itertools import groupby, combinations
+from collections import Counter
+from itertools import combinations
 
 from common.input_file import read_strings
-
-
-def transform_input(box_id):
-    """
-        We sort and groupby to get lists of letters from each ID
-    """
-    grouped_box_id = groupby(sorted(box_id))
-
-    # We need to convert to a list so that we may go through this
-    # list more than once, otherwise we exhaust iterators first time through
-
-    return [(key, list(group)) for key, group in grouped_box_id]
-
 
 def get_checksum(box_ids):
     """
         Get the checksum of all the box IDs
         Expects the box ids to be grouped and sorted
     """
-    grouped_box_ids = [transform_input(box_id) for box_id in box_ids]
+    grouped_box_ids = [Counter(box_id) for box_id in box_ids]
 
     return (
         get_number_of_boxes_with_exact_letters(grouped_box_ids, 2) *
@@ -45,7 +33,7 @@ def contains_desired_count(box, desired_count):
     """
         If the box has exactly 'desired_count` of any one letter
     """
-    return any(group for _, group in box if len(group) == desired_count)
+    return any(True for _, freq in box.items() if freq == desired_count)
 
 
 def get_common_letters_from_correct_boxes(box_ids):

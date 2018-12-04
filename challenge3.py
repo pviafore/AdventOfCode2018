@@ -1,7 +1,8 @@
 """
    Advent of Code 2018 Day 3
 """
-from itertools import product, chain, groupby
+from collections import Counter
+from itertools import product, chain
 import re
 
 from common.input_file import get_transformed_input
@@ -22,9 +23,7 @@ def get_claimed_squares(claims):
         Return a dictionary of all claimed squares where key is the coordinate
         and the value is the number of claims
     """
-    all_points = chain.from_iterable(points for _, points in claims)
-    rearranged_points = groupby(sorted(all_points))
-    return {point: len(list(claims)) for point, claims in rearranged_points}
+    return Counter(chain.from_iterable(points for _, points in claims))
 
 
 def get_number_of_overlapping_squares(claimed_squares):

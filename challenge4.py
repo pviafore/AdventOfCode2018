@@ -1,7 +1,7 @@
 """
     Advent of Code Day 4
 """
-from collections import abc
+from collections import abc, Counter
 import datetime as dt
 import re
 
@@ -82,17 +82,16 @@ class Guard:
         """Constructor with an ID in the form of #ID"""
         self.guard_id = int(guard_id[1:])
         self.times_slept = []
-        self.minutes_slept_frequency = {}
+        self.minutes_slept_frequency = Counter()
 
     def record_minutes_slept(self, begin_sleep_time, end_sleep_time):
         """
         Record the minutes slept (given two date times)
         """
-        for sleep_time in date_range_by_minute(begin_sleep_time, end_sleep_time):
-            self.times_slept.append(sleep_time)
-            if sleep_time.hour == 0:
-                current_record = self.minutes_slept_frequency.get(sleep_time.minute, 0)
-                self.minutes_slept_frequency[sleep_time.minute] = current_record + 1
+
+        date_range = list(date_range_by_minute(begin_sleep_time, end_sleep_time))
+        self.times_slept += date_range
+        self.minutes_slept_frequency.update(d.minute for d in date_range if d.hour == 0)
 
     def get_total_minutes_slept(self):
         """
@@ -104,13 +103,14 @@ class Guard:
         """
         Return the minute the guard is most likely to sleep during
         """
-        return max(self.minutes_slept_frequency.items(), key=lambda record: record[1])[0]
+        print(self.minutes_slept_frequency)
+        return self.minutes_slept_frequency.most_common(1)[0][0]
 
     def get_frequency_of_most_likely_minute_to_sleep(self):
         """
-        Return how many tmies the guard slept during the most likely minute
+        Return how many times the guard slept during the most likely minute
         """
-        return max(self.minutes_slept_frequency.items(), key=lambda record: record[1])[1]
+        return self.minutes_slept_frequency.most_common(1)[0][1]
 
     def does_fall_asleep(self):
         """
