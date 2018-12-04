@@ -1,6 +1,7 @@
 """
     Advent of Code Day 4
 """
+from collections import abc
 import datetime as dt
 import re
 
@@ -63,8 +64,14 @@ class Record:
     def __str__(self):
         return f"{self.date} -> {self.action} ID={self.guard_id}"
 
-
-MINUTE = dt.timedelta(minutes=1)
+def date_range_by_minute(begin_date, end_date):
+    """
+    Give a range of datetimes by the minute
+    """
+    current_date = begin_date
+    while current_date != end_date:
+        yield current_date
+        current_date += dt.timedelta(minutes=1)
 
 
 class Guard:
@@ -81,16 +88,11 @@ class Guard:
         """
         Record the minutes slept (given two date times)
         """
-
-        sleep_time = begin_sleep_time
-        while sleep_time != end_sleep_time:
-
+        for sleep_time in date_range_by_minute(begin_sleep_time, end_sleep_time):
             self.times_slept.append(sleep_time)
             if sleep_time.hour == 0:
-                current_record = self.minutes_slept_frequency.get(
-                    sleep_time.minute, 0)
+                current_record = self.minutes_slept_frequency.get(sleep_time.minute, 0)
                 self.minutes_slept_frequency[sleep_time.minute] = current_record + 1
-            sleep_time += MINUTE
 
     def get_total_minutes_slept(self):
         """
@@ -122,33 +124,45 @@ class Guard:
         """
         return self.guard_id == int(guard_id[1:])
 
+class GuardLog(abc.Iterable):
+    """
+        An iterable guard log
+    """
+    def __init__(self):
+        self.log = []
+
+    def get_guard(self, guard_id):
+        """
+        Get the guard.  Any new guard is automatically given a new entry in the log
+        """
+        if any(guard.matches_id(guard_id) for guard in self.log):
+            return next(g for g in self.log if g.matches_id(guard_id))
+        self.log.append(Guard(guard_id))
+        return self.log[-1]
+
+    def __iter__(self):
+        return iter(self.log)
+
 
 def get_guard_log(records):
     """
     Create a Guard Log - a list of guards
     """
-    guards = []
+    guards = GuardLog()
     records = iter(records)
     try:
         record = next(records)
         while True:
             assert record.action == Record.BEGINS_SHIFT
-            if any(guard.matches_id(record.id) for guard in guards):
-                guard = next(g for g in guards if g.matches_id(record.id))
-            else:
-                guard = Guard(record.id)
-                guards.append(guard)
+            guard = guards.get_guard(record.guard_id)
 
             record = next(records)
             while record.action != Record.BEGINS_SHIFT:
                 assert record.action == Record.SLEEPS
-
-                begin = record
                 end = next(records)
 
-                assert end.action == record.WAKES, str(
-                    end) + str(next(records))
-                guard.add_minutes_slept(begin.date, end.date)
+                assert end.action == record.WAKES
+                guard.record_minutes_slept(record.date, end.date)
                 record = next(records)
 
     except StopIteration:
@@ -169,9 +183,8 @@ def get_most_likely_to_sleep_guard_strategy_2(guards):
     Strategy 2 - ID of guard with most consistent_sleeping_minute * most likely minute to sleep
     """
     # find the guard with the highest most_likely_minute occuring
-    sleeping_guards = [guard for guard in guards if guard.does_fall_asleep()]
-    guard = max(sleeping_guards,
-                key=Guard.get_frequency_of_most_likely_minute_to_sleep)
+    sleepers = [guard for guard in guards if guard.does_fall_asleep()]
+    guard = max(sleepers, key=Guard.get_frequency_of_most_likely_minute_to_sleep)
     return guard.guard_id * guard.get_most_likely_minute_to_sleep()
 
 
