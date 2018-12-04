@@ -8,8 +8,6 @@ import re
 from common.input_file import get_transformed_input
 
 # man I want a tagged union or ADT for this
-
-
 def get_action(text):
     """
         Given a list of strings, determin if we are sleeping, awake, or beginning a shift
