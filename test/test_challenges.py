@@ -23,3 +23,8 @@ def test_day4():
                             get_most_likely_to_sleep_guard_strategy_2)
     assert get_most_likely_to_sleep_guard_strategy_1(GUARDS) == 95199
     assert get_most_likely_to_sleep_guard_strategy_2(GUARDS) == 7887
+
+def test_day5():
+    from challenge5 import POLYMER, get_reduced_polymer_length, get_optimized_polymer_length
+    assert get_reduced_polymer_length(POLYMER) == 9562
+    assert get_optimized_polymer_length(POLYMER) == 4934

@@ -22,3 +22,10 @@ def get_transformed_input(input_filename, transform_function):
     """
     with open(input_filename) as input_file:
         return [transform_function(line.strip()) for line in input_file]
+
+def read_single_line(input_filename, transform_function=str):
+    """
+        Read a single line of a file and transform it according to
+        transform function
+    """
+    return get_transformed_input(input_filename, transform_function)[0]
