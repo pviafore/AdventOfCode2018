@@ -28,7 +28,6 @@ def get_first_frequency_listed_twice(numbers):
     raise RuntimeError("This code is unreachable")
 
 
-
 NUMBERS = read_numbers("input/input1.txt")
 
 if __name__ == "__main__":
