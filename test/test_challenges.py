@@ -30,6 +30,6 @@ def test_day5():
     assert get_optimized_polymer_length(POLYMER) == 4934
 
 def test_day6():
-    from challenge6 import POINTS, get_largest_finite_region, get_safest_finite_region
-    assert get_largest_finite_region(POINTS) == 3989
-    assert get_safest_finite_region(POINTS) == 49715
+    from challenge6 import GRID, get_largest_finite_region, get_safest_finite_region
+    assert get_largest_finite_region(GRID) == 3989
+    assert get_safest_finite_region(GRID) == 49715
