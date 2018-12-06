@@ -27,7 +27,7 @@ def is_equidistant(source, point2, point3):
     """
     return get_manhattan_distance(source, point2) == get_manhattan_distance(source, point3)
 
-class Grid(abc.MutableMapping):
+class Grid(abc.Mapping):
     """
         A grid that you can set and get points from
     """
@@ -48,12 +48,6 @@ class Grid(abc.MutableMapping):
 
     def __getitem__(self, key):
         return self.all_points_in_rectangle[key]
-
-    def __setitem__(self, key, val):
-        self.all_points_in_rectangle[key] = val
-
-    def __delitem__(self, key):
-        del self.all_points_in_rectangle[key]
 
     def is_on_boundary(self, point):
         """
