@@ -22,7 +22,7 @@ def get_largest_finite_region(points):
     grid = to_bounded_grid(points, lambda point: get_closest_point(point, points))
     boundaries = set(grid[p] for p in grid.get_boundary_points() if grid[p] != TIED)
     counter = Counter(closest for closest in grid.values() if closest not in boundaries)
-    return counter.most_common(0)[0][1]
+    return counter.most_common(1)[0][1]
 
 def get_safest_finite_region(points):
     """
