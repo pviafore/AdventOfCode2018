@@ -32,7 +32,7 @@ def get_optimized_polymer_length(polymer):
         Find the shortest reduced polymer if we were to remove all of one unit (such as A/a)
     """
     lowercase_units = set(l.lower() for l in polymer)
-    return min(get_length_after_unit_removal(l, polymer) for l in set(lowercase_units))
+    return min(get_length_after_unit_removal(l, polymer) for l in lowercase_units)
 
 def get_length_after_unit_removal(letter, polymer):
     """
