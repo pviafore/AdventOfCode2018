@@ -15,7 +15,7 @@ def get_claim(claim):
     """
     claim_id, left, top, width, height = re.split(r"@|,|:|x", claim)
     left, top, width, height = int(left), int(top), int(width), int(height)
-    points = Grid(top=top, bottom=top + height - 1, left=left, right = left + width -1)
+    points = Grid(top=top, bottom=top + height - 1, left=left, right=left + width -1)
     return (claim_id, points)
 
 
