@@ -2,80 +2,157 @@
     Advent of Code Day 7
 """
 from itertools import count
+from common.graph import DAG
 from common.input_file import get_transformed_input
+
 def get_steps(step_string):
+    """
+        Get a list of steps
+    """
     words = step_string.split()
     return words[1], words[7]
 
-def condense_graph(steps):
-    graph = {}
+def create_graph(steps):
+    """
+        Create a DAG from the steps
+    """
+    graph = DAG() 
     for s1, s2 in steps:
-        graph[s1] = graph.get(s1, []) + [s2]
+        graph.add_edge(s1, s2)
     return graph
 
-def get_roots(steps):
-    nodes = set()
-    
-    for s1, s2 in steps:
-        
-        nodes.add(s1)
-        nodes.add(s2)
-    dests = [s[1] for s in steps] 
-    return [n for n in nodes if n not in dests]
-
-def are_prereqs_satisfied(candidate, seq, graph):
-    prereqs = [pre for pre, post in graph.items() if candidate in post]
-    return all(prereq in seq for prereq in prereqs)
-
 def get_topologically_sorted_steps(steps):
-    graph = condense_graph(steps)
-    roots = get_roots(steps)
+    """
+        Topologically sort the steps
+    """
+    graph = create_graph(steps)
     s = ""
-    next_input = sorted(roots) 
-    while next_input:
-        print(s, next_input)
-        n = next(n for n in next_input if are_prereqs_satisfied(n, s, graph))         
-        if n not in s:
-            s += n
-        next_input.remove(n)
-        next_input = sorted(set(next_input + graph.get(n, [])))
+    while graph:
+        node = sorted(graph.get_roots())[0]
+        s += node
+        graph.remove_node(node)
     return s
 
 class Worker:
+    """
+        A class of workers that can take and stop a task
+    """
     def __init__(self):
-        self.working = None
-        self.tick_finished = 1 
+        """
+            Constructor
+        """
+        self.task = None
+        self.finish_time = 1 
+
+    def is_task_finished(self, current_tick):
+        """
+            Is the task finished?
+        """
+        return current_tick > self.finish_time
+
+    def start_task(self, task, finish_time):
+        """
+            Start the task and log the expected time to finish
+        """
+        self.task = task
+        self.finish_time = finish_time
+
+    def pop_task(self):
+        """
+            Stop working on a task and return it
+        """
+        task = self.task
+        self.task = None
+        return task
+
+class WorkerPool:
+    """
+        A pool of workers
+    """
+
+    def __init__(self, number_of_workers):
+        """
+            Constructor
+        """
+        self.workers = [Worker() for _ in range(number_of_workers)]
+
+    def get_active_workers(self):
+        """
+            get a list of all workers who currently have a task
+        """
+        return [worker for worker in self.workers if worker.task is not None]
+    
+    def get_idle_workers(self):
+        """
+            get a list of all workers who are idle (no task)
+        """
+        return [worker for worker in self.workers if worker.task is None]
+
+    def get_current_tasks(self):
+        """
+            Get a list of all tasks being worked
+        """
+        return [worker.task for worker in self.get_active_workers()]
+
+    def is_task_in_progress(self, task):
+        """
+            Return true if a task in progress
+        """
+        return task in self.get_current_tasks()
+
+    def are_all_workers_idle(self):
+        """
+            Return true if all workers are idle
+        """
+        return len(self.get_idle_workers()) == len(self.workers)
+
+def get_available_jobs(graph, workers):
+    """
+        Get a list of nodes that are roots and not currently being worked
+    """
+    return sorted(node for node in graph.get_roots() if not workers.is_task_in_progress(node))
+
+def finish_jobs(tick, workers, graph):
+    """
+        Finish any jobs that are outstanding at this tick
+    """
+
+    finished = ""
+    for worker in workers.get_active_workers():
+        if worker.is_task_finished(tick): 
+            graph.remove_node(worker.task)
+            finished += worker.pop_task()
+    return finished
+
+def start_new_jobs(tick, workers, graph, delay):
+    """
+        See if there are any new jobs to start
+    """
+    for worker in workers.get_idle_workers():
+        available_jobs = get_available_jobs(graph, workers)
+        if available_jobs:
+            task = available_jobs[0]
+            finish_time = tick + delay + (ord(task) - ord('A'))  
+            worker.start_task(task, finish_time)
 
 
-def get_total_time_needed(topo, steps, num_workers, delay=60):
-    graph = condense_graph(steps)
-    workers = [Worker() for _ in range( num_workers)]
-    available_jobs = topo
-    done = ""
-    available_jobs = sorted([n for n in available_jobs if n not in done and n not in (worker.working for worker in workers) and are_prereqs_satisfied(n, done, graph)])
+def get_total_time_needed(sorted_input, steps, number_of_workers, delay=60):
+    """
+        Get the total time needed to finish all the jobs
+    """
+    graph = create_graph(steps)
+    workers = WorkerPool(number_of_workers)
+    finished = ""
     for tick in count():
-        for worker in (w for w in workers if w.working):
-            if tick > worker.tick_finished and worker.working is not None:
-                done += worker.working
-                print(f"{tick}: worker done working on {worker.working}")
-                available_jobs = sorted([n for n in topo if n not in done and n not in (worker.working for worker in workers) and are_prereqs_satisfied(n, done, graph)])
-                print(f"Available jobs left: {available_jobs}")
-                worker.working = None
+        finished += finish_jobs(tick, workers, graph)
+        start_new_jobs(tick, workers, graph, delay)
 
-        for worker in (w for w in workers if not w.working):
-            if worker.working is None and available_jobs:
-                worker.working, *available_jobs = available_jobs
-                worker.tick_finished = tick + delay + (ord(worker.working) - ord('A'))  
-                print(f"{tick}: Worker picked up {worker.working}, will finish at {worker.tick_finished}")
-                print(f"Done so far: {done} Remaining jobs: {available_jobs}")
-        if not available_jobs and all(worker.working is None for worker in workers):
-            assert len(done) == len(topo)
+        if len(finished) == len(sorted_input):
             return tick 
         
 
-
-
 STEPS = get_transformed_input("input/input7.txt", get_steps)
 TOPO = get_topologically_sorted_steps(STEPS)
-print(TOPO)
-print(get_total_time_needed(TOPO, STEPS, 5,60))
+if __name__ == "__main__":
+    print(TOPO)
+    print(get_total_time_needed(TOPO, STEPS, 5,60))
