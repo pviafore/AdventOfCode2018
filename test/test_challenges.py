@@ -33,3 +33,8 @@ def test_day6():
     from challenge6 import POINTS, get_largest_finite_region, get_safest_finite_region
     assert get_largest_finite_region(POINTS) == 3989
     assert get_safest_finite_region(POINTS) == 49715
+
+def tets_day7():
+    from challenge7 import STEPS, get_topologically_sorted_steps, get_total_time_needed
+    assert get_topologically_sorted_steps(STEPS) == "CQSWKZFJONPBEUMXADLYIGVRH"
+    assert get_total_time_needed("CQSWKZFJONPBEUMXADLYIGVRH", STEPS, 5) == 914

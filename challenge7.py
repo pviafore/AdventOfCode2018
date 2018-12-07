@@ -27,7 +27,9 @@ def are_prereqs_satisfied(candidate, seq, graph):
     prereqs = [pre for pre, post in graph.items() if candidate in post]
     return all(prereq in seq for prereq in prereqs)
 
-def topo_sort(roots, graph):
+def get_topologically_sorted_steps(steps):
+    graph = condense_graph(steps)
+    roots = get_roots(steps)
     s = ""
     next_input = sorted(roots) 
     while next_input:
@@ -45,7 +47,8 @@ class Worker:
         self.tick_finished = 1 
 
 
-def get_time_taken(topo, graph, num_workers, delay=60):
+def get_total_time_needed(topo, steps, num_workers, delay=60):
+    graph = condense_graph(steps)
     workers = [Worker() for _ in range( num_workers)]
     available_jobs = topo
     done = ""
@@ -73,7 +76,6 @@ def get_time_taken(topo, graph, num_workers, delay=60):
 
 
 STEPS = get_transformed_input("input/input7.txt", get_steps)
-graph = condense_graph(STEPS)
-roots = get_roots(STEPS)
-TOPO = topo_sort(roots, graph)
-print(get_time_taken( TOPO, graph, 5,60))
+TOPO = get_topologically_sorted_steps(STEPS)
+print(TOPO)
+print(get_total_time_needed(TOPO, STEPS, 5,60))
