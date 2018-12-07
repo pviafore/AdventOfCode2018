@@ -2,10 +2,11 @@
    Advent of Code 2018 Day 3
 """
 from collections import Counter
-from itertools import product, chain
+from itertools import chain
 import re
 
 from common.input_file import get_transformed_input
+from common.grid import Grid
 
 
 def get_claim(claim):
@@ -14,8 +15,8 @@ def get_claim(claim):
     """
     claim_id, left, top, width, height = re.split(r"@|,|:|x", claim)
     left, top, width, height = int(left), int(top), int(width), int(height)
-    points = product(range(left, left + width), range(top, top + height))
-    return (claim_id, list(points))
+    points = Grid(top=top, bottom=top + height - 1, left=left, right=left + width -1)
+    return (claim_id, points)
 
 
 def get_claimed_squares(claims):

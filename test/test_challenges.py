@@ -28,3 +28,8 @@ def test_day5():
     from challenge5 import POLYMER, get_reduced_polymer_length, get_optimized_polymer_length
     assert get_reduced_polymer_length(POLYMER) == 9562
     assert get_optimized_polymer_length(POLYMER) == 4934
+
+def test_day6():
+    from challenge6 import POINTS, get_largest_finite_region, get_safest_finite_region
+    assert get_largest_finite_region(POINTS) == 3989
+    assert get_safest_finite_region(POINTS) == 49715
