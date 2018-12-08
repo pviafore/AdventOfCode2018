@@ -16,9 +16,9 @@ def create_graph(steps):
     """
         Create a DAG from the steps
     """
-    graph = DAG() 
-    for s1, s2 in steps:
-        graph.add_edge(s1, s2)
+    graph = DAG()
+    for source, dest in steps:
+        graph.add_edge(source, dest)
     return graph
 
 def get_topologically_sorted_steps(steps):
@@ -26,12 +26,12 @@ def get_topologically_sorted_steps(steps):
         Topologically sort the steps
     """
     graph = create_graph(steps)
-    s = ""
+    out = ""
     while graph:
         node = sorted(graph.get_roots())[0]
-        s += node
+        out += node
         graph.remove_node(node)
-    return s
+    return out
 
 class Worker:
     """
@@ -42,7 +42,7 @@ class Worker:
             Constructor
         """
         self.task = None
-        self.finish_time = 1 
+        self.finish_time = 1
 
     def is_task_finished(self, current_tick):
         """
@@ -81,7 +81,7 @@ class WorkerPool:
             get a list of all workers who currently have a task
         """
         return [worker for worker in self.workers if worker.task is not None]
-    
+
     def get_idle_workers(self):
         """
             get a list of all workers who are idle (no task)
@@ -119,7 +119,7 @@ def finish_jobs(tick, workers, graph):
 
     finished = ""
     for worker in workers.get_active_workers():
-        if worker.is_task_finished(tick): 
+        if worker.is_task_finished(tick):
             graph.remove_node(worker.task)
             finished += worker.pop_task()
     return finished
@@ -132,7 +132,7 @@ def start_new_jobs(tick, workers, graph, delay):
         available_jobs = get_available_jobs(graph, workers)
         if available_jobs:
             task = available_jobs[0]
-            finish_time = tick + delay + (ord(task) - ord('A'))  
+            finish_time = tick + delay + (ord(task) - ord('A'))
             worker.start_task(task, finish_time)
 
 
@@ -148,11 +148,11 @@ def get_total_time_needed(sorted_input, steps, number_of_workers, delay=60):
         start_new_jobs(tick, workers, graph, delay)
 
         if len(finished) == len(sorted_input):
-            return tick 
-        
+            return tick
+    raise RuntimeError("Unreachable Code")
 
 STEPS = get_transformed_input("input/input7.txt", get_steps)
 TOPO = get_topologically_sorted_steps(STEPS)
 if __name__ == "__main__":
     print(TOPO)
-    print(get_total_time_needed(TOPO, STEPS, 5,60))
+    print(get_total_time_needed(TOPO, STEPS, 5))
