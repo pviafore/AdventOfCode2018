@@ -38,3 +38,8 @@ def test_day7():
     from challenge7 import STEPS, get_topologically_sorted_steps, get_total_time_needed
     assert get_topologically_sorted_steps(STEPS) == "CQSWKZFJONPBEUMXADLYIGVRHT"
     assert get_total_time_needed("CQSWKZFJONPBEUMXADLYIGVRHT", STEPS, 5) == 914
+
+def test_day8():
+    from challenge8 import TREE 
+    assert TREE.get_metadata_sum() == 40036
+    assert TREE.get_value() == 21677
