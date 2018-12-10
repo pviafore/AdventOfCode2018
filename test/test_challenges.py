@@ -43,3 +43,8 @@ def test_day8():
     from challenge8 import TREE 
     assert TREE.get_metadata_sum() == 40036
     assert TREE.get_value() == 21677
+
+def test_day9():
+    from challenge9 import get_highest_score 
+    assert get_highest_score(418, 70769) == 402398
+    assert get_highest_score(418, 70769*100) == 3426843186
