@@ -27,6 +27,15 @@ def is_equidistant(source, point2, point3):
     """
     return get_manhattan_distance(source, point2) == get_manhattan_distance(source, point3)
 
+def get_average_point(points):
+    """
+        Get the average position of all the points
+    """
+    xes = [point.x for point in points]
+    yes = [point.y for point in points]
+    return Point(sum(xes) // len(xes), sum(yes) // len(yes))
+
+
 class Grid(abc.Mapping):
     """
         A grid that you can set and get points from
@@ -60,6 +69,17 @@ class Grid(abc.Mapping):
             Get all the points on a boundary
         """
         return filter(self.is_on_boundary, self.all_points_in_rectangle)
+
+    def __str__(self):
+        """
+            Print the string
+        """
+        output = ""
+        for pos_y in range(self.top, self.bottom + 1):
+            for pos_x in range(self.left, self.right + 1):
+                output += "".join(self.all_points_in_rectangle[Point(pos_x, pos_y)])
+            output += "\n"
+        return output
 
 def to_bounded_grid(points, fill_func=lambda _: None):
     """
