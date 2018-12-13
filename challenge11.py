@@ -44,7 +44,7 @@ def get_power_levels(grid, square=3):
 
         y_power_level = power_level
         for y_pos in range(grid.top + 1, grid.bottom - square):
-            y_power_level += sum(grid[Point(x, y_pos + square - 1)] for x in range(x_pos, x_pos+square))
+            y_power_level += sum(grid[Point(x, y_pos+square-1)] for x in range(x_pos, x_pos+square))
             y_power_level -= sum(grid[Point(x, y_pos - 1)] for x in range(x_pos, x_pos+square))
             yield (x_pos, y_pos, square), y_power_level
 

@@ -1,3 +1,7 @@
+"""
+    Advent of Code Day 12
+"""
+
 from common.input_file import read_strings
 
 class PlantRow():
@@ -23,13 +27,13 @@ class PlantRow():
         """
             Return if the index is a plant;
         """
-        return self.state[index - self.left_index]  == "#" 
+        return self.state[index - self.left_index] == "#"
 
     def get_sum(self):
         """
             Get the sum of the indices that have a plant
         """
-        return sum(index for index, plant in enumerate(self.state, self.left_index) if self.is_plant(index))
+        return sum(index for index, p in enumerate(self.state, self.left_index) if p == "#")
 
     def __str__(self):
         """
@@ -56,7 +60,7 @@ def get_left_most_plant_index(plant_row, left_index):
     """
         Get the left most plant index
     """
-    return next(index for index,plant in enumerate(plant_row, left_index) if plant == "#")
+    return next(index for index, plant in enumerate(plant_row, left_index) if plant == "#")
 
 
 def get_plants_sum(plant_info, num_generations):
@@ -64,12 +68,12 @@ def get_plants_sum(plant_info, num_generations):
         Apply the plant spreading for a number of generations and return the sum
     """
     plants = PlantRow(plant_info[0].split()[2], 0)
-    plant_instructions =  dict(to_plant_instruction(p.split()) for p in plant_info[2:])
+    plant_instructions = dict(to_plant_instruction(p.split()) for p in plant_info[2:])
     for generation in range(num_generations):
         old_plants = plants
-        next_plants = "".join(plant_instructions.get(plant, ".") for plant in plants.sliding_window())
+        new_plants = "".join(plant_instructions.get(p, ".") for p in plants.sliding_window())
         # we add 2 here to account for our padding shenanigans
-        plants = PlantRow(next_plants, get_left_most_plant_index(next_plants, plants.left_index + 2))
+        plants = PlantRow(new_plants, get_left_most_plant_index(new_plants, plants.left_index + 2))
         if old_plants == plants:
             plants.left_index += (num_generations - generation - 1)
             break
