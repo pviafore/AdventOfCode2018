@@ -48,3 +48,8 @@ def test_day9():
     from challenge9 import get_highest_score 
     assert get_highest_score(418, 70769) == 402398
     assert get_highest_score(418, 70769*100) == 3426843186
+
+def test_day11():
+    from challenge12 import get_plants_sum, INFO
+    assert get_plants_sum(INFO, 20) == 2040
+    assert get_plants_sum(INFO, 1_700_000_011)
