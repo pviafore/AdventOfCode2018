@@ -49,7 +49,12 @@ def test_day9():
     assert get_highest_score(418, 70769) == 402398
     assert get_highest_score(418, 70769*100) == 3426843186
 
-def test_day11():
+def test_day12():
     from challenge12 import get_plants_sum, INFO
     assert get_plants_sum(INFO, 20) == 2040
     assert get_plants_sum(INFO, 1_700_000_011)
+
+def test_day13():
+    from challenge13 import TRACKS, get_first_crash, get_last_cart_remaining
+    assert get_first_crash(TRACKS) == (45, 34)
+    assert get_last_cart_remaining(TRACKS) == (91, 25) 
