@@ -3,9 +3,8 @@
 """
 
 from itertools import cycle
-from typing import Callable
 from common.input_file import read_strings
-from common.grid import MapGrid, Point, to_left, to_right, to_below, to_above
+from common.grid import MapGrid, to_left, to_right, to_below, to_above
 
 def remove_cart(symbol):
     """
@@ -51,12 +50,12 @@ class Cart:
         if self.underlying_track == '\\':
             turn_mapping = {"<": "^", "v": ">", "^": "<", ">": "v"}
         self.symbol = turn_mapping[self.symbol]
-    
+
     def get_underlying_track(self):
         """
             Get the track that is under the cart
         """
-        return self.underlying_track 
+        return self.underlying_track
 
 
 class TrackTimeline:
@@ -78,16 +77,16 @@ class TrackTimeline:
         for cart in self.carts:
             if cart.position in self.crashes:
                 continue
-            
+
             first_position = cart.position
             cart.move()
-            
+
             old_track = cart.underlying_track
-            cart.underlying_track = self.map[cart.position] 
+            cart.underlying_track = self.map[cart.position]
             self.map.move(first_position, cart.position, old_track)
             cart.turn_cart_if_needed()
             self.map[cart.position] = cart.symbol
-            
+
             for other_cart in self.carts:
                 if cart.position == other_cart.position and other_cart != cart:
                     self.crashes.append(cart.position)

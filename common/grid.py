@@ -149,7 +149,7 @@ class MapGrid(abc.MutableMapping):
         self.default = default
 
     def __str__(self):
-        return str(self.grid) 
+        return str(self.grid)
 
     def get_characters(self, matching_function: Callable[[Point, Any], bool]):
         """
@@ -178,4 +178,4 @@ class MapGrid(abc.MutableMapping):
         self.grid[key] = value
 
     def __delitem__(self, key: Point):
-        self.grid = self.default 
+        self.grid[key] = self.default
