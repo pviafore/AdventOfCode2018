@@ -58,3 +58,10 @@ def test_day13():
     from challenge13 import TRACKS, get_first_crash, get_last_cart_remaining
     assert get_first_crash(TRACKS) == (45, 34)
     assert get_last_cart_remaining(TRACKS) == (91, 25) 
+
+def test_day14():
+    from challenge14 import (IMPROVEMENT_POINT,
+                             get_after_improvement_point,
+                             get_recipes_before_improvement_point)
+    assert get_after_improvement_point(IMPROVEMENT_POINT) == "1132413111"
+    assert get_recipes_before_improvement_point(IMPROVEMENT_POINT) == 20340232
