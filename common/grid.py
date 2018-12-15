@@ -5,7 +5,7 @@
 # pylint: disable=invalid-name
 from collections import abc, namedtuple
 from itertools import product
-from typing import Iterable, List
+from typing import Any, Callable, Iterable, List
 
 Point = namedtuple("Point", ["x", "y"])
 
@@ -61,7 +61,7 @@ def to_below(point: Point) -> Point:
     return Point(point.x, point.y + 1)
 
 
-class Grid(abc.Mapping):
+class Grid(abc.MutableMapping):
     """
         A grid that you can set and get points from
     """
@@ -71,6 +71,7 @@ class Grid(abc.Mapping):
         self.bottom = bottom
         self.left = left
         self.right = right
+        self.default_function = lambda: None
         points = product(range(left, right + 1), range(top, bottom + 1))
         self.all_points_in_rectangle = {Point(x, y): fill_function(Point(x, y)) for x, y in points}
 
@@ -82,6 +83,12 @@ class Grid(abc.Mapping):
 
     def __getitem__(self, key: Point):
         return self.all_points_in_rectangle[key]
+
+    def __setitem__(self, key: Point, value):
+        self.all_points_in_rectangle[key] = value
+
+    def __delitem__(self, key: Point):
+        self.all_points_in_rectangle = None
 
     def is_on_boundary(self, point: Point) -> bool:
         """
@@ -106,6 +113,7 @@ class Grid(abc.Mapping):
             output += "\n"
         return output
 
+
 def to_bounded_grid(points: List[Point], fill_func=lambda _: None) -> Grid:
     """
         Convert a set of point to a bounded grid
@@ -113,3 +121,61 @@ def to_bounded_grid(points: List[Point], fill_func=lambda _: None) -> Grid:
     xs = [p.x for p in points]
     ys = [p.y for p in points]
     return Grid(top=min(ys), bottom=max(ys), left=min(xs), right=max(xs), fill_function=fill_func)
+
+def from_strings(text: List[str], default=None) -> Grid:
+    """
+        From a row of strings create a grid
+        If the point doesn't exist, fill with default
+    """
+    top = 0
+    bottom = len(text)
+    left = 0
+    right = max(len(t) for t in text)
+
+    def fill_function(point: Point):
+        if point.y >= len(text) or point.x >= len(text[point.y]):
+            return default
+        return text[point.y][point.x]
+
+    return Grid(top=top, bottom=bottom, left=left, right=right, fill_function=fill_function)
+
+class MapGrid(abc.MutableMapping):
+    """
+        A text grid that represents some sort of cartographical map
+    """
+
+    def __init__(self, text: List[str], default: str):
+        self.grid = from_strings(text, default)
+        self.default = default
+
+    def __str__(self):
+        return str(self.grid) 
+
+    def get_characters(self, matching_function: Callable[[Point, Any], bool]):
+        """
+            Get all characters matching a point
+        """
+        c = [(p, v) for p, v in self.grid.items() if matching_function(p, v)]
+        return c
+
+    def move(self, source: Point, destination: Point, backfill: str):
+        """
+            Move whatever token at source to destination, and backfill into source
+        """
+        self.grid[destination] = self.grid[source]
+        self.grid[source] = backfill
+
+    def __iter__(self):
+        return iter(self.grid)
+
+    def __len__(self):
+        return len(self.grid)
+
+    def __getitem__(self, key: Point):
+        return self.grid[key]
+
+    def __setitem__(self, key: Point, value):
+        self.grid[key] = value
+
+    def __delitem__(self, key: Point):
+        self.grid = self.default 
