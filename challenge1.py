@@ -3,7 +3,6 @@
 from itertools import accumulate, cycle
 from common.input_file import read_numbers
 
-
 def get_sum_of_frequencies(numbers):
     """
         Given a list of frequencies (positive and negative)

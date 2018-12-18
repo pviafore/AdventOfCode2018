@@ -75,6 +75,7 @@ class TrackTimeline:
             Run a tick by moving all carts and detecting any crashes
         """
         for cart in self.carts:
+
             if cart.position in self.crashes:
                 continue
 
@@ -130,8 +131,10 @@ def get_first_crash(tracks):
         Get the first crash that happened
     """
     timeline = TrackTimeline(tracks)
+    counter = 1
     while not timeline.has_crashed():
         timeline.tick()
+        counter += 1
 
     return timeline.get_crashes()[0]
 

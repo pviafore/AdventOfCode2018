@@ -5,9 +5,10 @@
 # pylint: disable=invalid-name
 from collections import abc, namedtuple
 from itertools import product
-from typing import Any, Callable, Iterable, List
+from typing import Any, Callable, Iterable, List, Sequence, Tuple, Union
 
 Point = namedtuple("Point", ["x", "y"])
+NestedPoints = List[Tuple[Point, Any]]
 
 def to_point(point_str: str):
     """
@@ -28,7 +29,7 @@ def is_equidistant(source: Point, point2: Point, point3: Point) -> bool:
     """
     return get_manhattan_distance(source, point2) == get_manhattan_distance(source, point3)
 
-def get_average_point(points: List[Point]) -> Point:
+def get_average_point(points: Sequence[Point]) -> Point:
     """
         Get the average position of all the points
     """
@@ -59,7 +60,6 @@ def to_below(point: Point) -> Point:
         Move the point down (Assuming 0,0 is top left)
     """
     return Point(point.x, point.y + 1)
-
 
 class Grid(abc.MutableMapping):
     """
@@ -114,7 +114,7 @@ class Grid(abc.MutableMapping):
         return output
 
 
-def to_bounded_grid(points: List[Point], fill_func=lambda _: None) -> Grid:
+def to_bounded_grid(points: Sequence[Point], fill_func=lambda _: None) -> Grid:
     """
         Convert a set of point to a bounded grid
     """
@@ -122,7 +122,7 @@ def to_bounded_grid(points: List[Point], fill_func=lambda _: None) -> Grid:
     ys = [p.y for p in points]
     return Grid(top=min(ys), bottom=max(ys), left=min(xs), right=max(xs), fill_function=fill_func)
 
-def from_strings(text: List[str], default=None) -> Grid:
+def from_strings(text: Sequence[str], default=None) -> Grid:
     """
         From a row of strings create a grid
         If the point doesn't exist, fill with default
@@ -139,24 +139,30 @@ def from_strings(text: List[str], default=None) -> Grid:
 
     return Grid(top=top, bottom=bottom, left=left, right=right, fill_function=fill_function)
 
+def get_orthogonally_adjacent(point: Point) -> List[Point]:
+    """
+        Get the 4 orthogonally adjacent points
+    """
+    return [to_above(point), to_left(point), to_right(point), to_below(point)]
+
 class MapGrid(abc.MutableMapping):
     """
         A text grid that represents some sort of cartographical map
     """
 
-    def __init__(self, text: List[str], default: str):
+    def __init__(self, text: Sequence[str], default: str):
         self.grid = from_strings(text, default)
         self.default = default
 
     def __str__(self):
         return str(self.grid)
 
-    def get_characters(self, matching_function: Callable[[Point, Any], bool]):
+    def get_characters(self, matcher: Union[str, Callable[[Point, Any], bool]]) -> NestedPoints:
         """
             Get all characters matching a point
         """
-        c = [(p, v) for p, v in self.grid.items() if matching_function(p, v)]
-        return c
+        matching_function = matcher if callable(matcher) else (lambda _p, x: x == matcher)
+        return [(p, v) for p, v in self.grid.items() if matching_function(p, v)]
 
     def move(self, source: Point, destination: Point, backfill: str):
         """
@@ -179,3 +185,52 @@ class MapGrid(abc.MutableMapping):
 
     def __delitem__(self, key: Point):
         self.grid[key] = self.default
+
+    def is_valid(self, p: Point, invalid: Sequence[str]):
+        """
+            If the point is in the graph and not equal to invalid
+        """
+        return p in self.grid and self.grid[p] not in invalid
+
+    def get_closest_targets(self, point: Point, targets: List[Point], obstacles: Sequence[str]):
+        """
+            Return a list of paths that are minimal distance to a target square
+        """
+        candidates = [(point, 0)]
+        seen = set([point])
+        while candidates:
+            # See if any of our paths are targets
+            valid_paths = [candidate for candidate in candidates if candidate[0] in targets]
+            if valid_paths:
+                return valid_paths
+
+            new_paths = []
+            for last, length in candidates:
+                for orthogonal in get_orthogonally_adjacent(last):
+                    if orthogonal not in seen and self.is_valid(orthogonal, obstacles):
+                        new_path = (orthogonal, length + 1)
+                        seen.add(orthogonal)
+                        new_paths.append(new_path)
+
+            candidates = new_paths
+
+        return []
+
+
+    def get_best_next_step(self, point: Point, target: Point, length: int, obstacles: str):
+        """
+            Get the best next step given a point and a target (and it has to be < length)
+        """
+        if point == target:
+            return point
+        orthogonal = [p for p in get_orthogonally_adjacent(point) if self.is_valid(p, obstacles)]
+        paths = [(p, self.get_closest_targets(p, [target], obstacles)) for p in orthogonal]
+        paths = [(first, answers[0]) for first, answers in paths if answers]
+        return next(first for (first, (last, l)) in paths if l < length and last == target)
+
+    def is_adjacent_to(self, point: Point, desired: str) -> bool:
+        """
+            Return true if the point is adjacent to a desired square
+        """
+        orthogonal = get_orthogonally_adjacent(point)
+        return any(self.grid[p] == desired for p in orthogonal if self.is_valid(p, []))

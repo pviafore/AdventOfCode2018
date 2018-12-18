@@ -1,2 +1,1 @@
-mypy *.py common/*.py
-pylint *.py common/*.py
+mypy *.py common/*.py && pylint *.py common/*.py
