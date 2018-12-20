@@ -65,3 +65,11 @@ def test_day14():
                              get_recipes_before_improvement_point)
     assert get_after_improvement_point(IMPROVEMENT_POINT) == "1132413111"
     assert get_recipes_before_improvement_point(IMPROVEMENT_POINT) == 20340232
+
+def test_day16():
+    from challenge16 import (SAMPLES,
+                             PROGRAM,
+                             get_samples_matching_three_or_more,
+                             get_program_results)
+    assert get_samples_matching_three_or_more(SAMPLES) == 493
+    assert get_program_results(SAMPLES, PROGRAM) == 445
