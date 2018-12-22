@@ -4,7 +4,7 @@
 
 from itertools import cycle
 from common.input_file import read_strings
-from common.grid import MapGrid, to_left, to_right, to_below, to_above
+from common.grid import TextGrid, to_left, to_right, to_below, to_above
 
 def remove_cart(symbol):
     """
@@ -63,7 +63,7 @@ class TrackTimeline:
         A representation of all of our tracks (carts will not be shown on these tracks)
     """
     def __init__(self, tracks):
-        self.map = MapGrid(tracks, " ")
+        self.map = TextGrid(tracks, " ")
         self.carts = [Cart(c, pos) for pos, c in self.map.get_characters(is_cart)]
         self.crashes = []
 

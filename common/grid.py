@@ -109,18 +109,28 @@ class Grid(abc.MutableMapping):
         output = ""
         for pos_y in range(self.top, self.bottom + 1):
             for pos_x in range(self.left, self.right + 1):
-                output += "".join(self.all_points_in_rectangle[Point(pos_x, pos_y)])
+                output += str(self.all_points_in_rectangle[Point(pos_x, pos_y)])
             output += "\n"
         return output
 
+    def get_matching_points(self, func: Callable[[Point, Any], bool]) -> List[Tuple[Point, Any]]:
+        """
+            Get all points matching a function
+        """
+        return [(p,v) for p, v in self.all_points_in_rectangle.items() if func(p, v)]
 
-def to_bounded_grid(points: Sequence[Point], fill_func=lambda _: None) -> Grid:
+
+def to_bounded_grid(points: Iterable[Point], fill_func=lambda _: None, padding=(0,0)) -> Grid:
     """
         Convert a set of point to a bounded grid
     """
     xs = [p.x for p in points]
     ys = [p.y for p in points]
-    return Grid(top=min(ys), bottom=max(ys), left=min(xs), right=max(xs), fill_function=fill_func)
+    return Grid(top=min(ys) - padding[1],
+                bottom=max(ys) + padding[1],
+                left=min(xs) - padding[0],
+                right=max(xs) + padding[0],
+                fill_function=fill_func)
 
 def from_strings(text: Sequence[str], default=None) -> Grid:
     """
@@ -145,7 +155,7 @@ def get_orthogonally_adjacent(point: Point) -> List[Point]:
     """
     return [to_above(point), to_left(point), to_right(point), to_below(point)]
 
-class MapGrid(abc.MutableMapping):
+class TextGrid(abc.MutableMapping):
     """
         A text grid that represents some sort of cartographical map
     """
@@ -162,7 +172,7 @@ class MapGrid(abc.MutableMapping):
             Get all characters matching a point
         """
         matching_function = matcher if callable(matcher) else (lambda _p, x: x == matcher)
-        return [(p, v) for p, v in self.grid.items() if matching_function(p, v)]
+        return self.grid.get_matching_points(matching_function)
 
     def move(self, source: Point, destination: Point, backfill: str):
         """

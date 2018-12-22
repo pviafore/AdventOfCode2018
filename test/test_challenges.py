@@ -73,3 +73,8 @@ def test_day16():
                              get_program_results)
     assert get_samples_matching_three_or_more(SAMPLES) == 493
     assert get_program_results(SAMPLES, PROGRAM) == 445
+
+def test_day17():
+    from challenge17 import GRID
+    assert GRID.get_number_of_tiles_at_rest() == 22474
+    assert GRID.get_number_of_tiles_water_reached() == 27736

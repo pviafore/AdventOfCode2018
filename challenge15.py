@@ -4,7 +4,7 @@
 from itertools import chain, count
 from typing import List
 
-from common.grid import MapGrid, get_orthogonally_adjacent, Point
+from common.grid import TextGrid, get_orthogonally_adjacent, Point
 from common.input_file import read_strings
 
 def is_player(_, character: str) -> bool:
@@ -31,7 +31,7 @@ class Battlefield:
         A battlefield class that tracks game state
     """
     def __init__(self, cave, elf_attack_power=3, stop_on_elf_death=False):
-        self.cave = MapGrid(cave, "#")
+        self.cave = TextGrid(cave, "#")
         self.health = {p: 200 for p, _ in self.cave.get_characters(lambda _, v: v in "EG")}
         self.elf_attack_power = elf_attack_power
         self.stop_on_elf_death = stop_on_elf_death
