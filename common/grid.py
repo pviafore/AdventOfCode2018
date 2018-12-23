@@ -117,10 +117,10 @@ class Grid(abc.MutableMapping):
         """
             Get all points matching a function
         """
-        return [(p,v) for p, v in self.all_points_in_rectangle.items() if func(p, v)]
+        return [(p, v) for p, v in self.all_points_in_rectangle.items() if func(p, v)]
 
 
-def to_bounded_grid(points: Iterable[Point], fill_func=lambda _: None, padding=(0,0)) -> Grid:
+def to_bounded_grid(points: Iterable[Point], fill_func=lambda _: None, padding=(0, 0)) -> Grid:
     """
         Convert a set of point to a bounded grid
     """
