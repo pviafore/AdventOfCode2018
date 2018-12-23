@@ -78,3 +78,9 @@ def test_day17():
     from challenge17 import GRID
     assert GRID.get_number_of_tiles_at_rest() == 22474
     assert GRID.get_number_of_tiles_water_reached() == 27736
+
+def test_day18():
+    from challenge18 import GRID, transform_over_time, get_total_resource_value
+    transform_over_time(GRID, 10)
+    assert(get_total_resource_value(GRID) == 384416)
+    

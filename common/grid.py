@@ -138,9 +138,9 @@ def from_strings(text: Sequence[str], default=None) -> Grid:
         If the point doesn't exist, fill with default
     """
     top = 0
-    bottom = len(text)
+    bottom = len(text) - 1
     left = 0
-    right = max(len(t) for t in text)
+    right = max(len(t) for t in text) - 1
 
     def fill_function(point: Point):
         if point.y >= len(text) or point.x >= len(text[point.y]):
@@ -154,6 +154,14 @@ def get_orthogonally_adjacent(point: Point) -> List[Point]:
         Get the 4 orthogonally adjacent points
     """
     return [to_above(point), to_left(point), to_right(point), to_below(point)]
+
+def get_all_adjacent(point: Point) -> List[Point]:
+    """
+        Get the 8 surrounding points
+    """
+    diagonals = [to_left(to_above(point)), to_right(to_above(point)),
+                 to_left(to_below(point)), to_right(to_below(point))]
+    return get_orthogonally_adjacent(point) + diagonals
 
 class TextGrid(abc.MutableMapping):
     """
@@ -244,3 +252,9 @@ class TextGrid(abc.MutableMapping):
         """
         orthogonal = get_orthogonally_adjacent(point)
         return any(self.grid[p] == desired for p in orthogonal if self.is_valid(p, []))
+
+    def get_surrounding(self, point: Point) -> Sequence[Tuple[Point, str]]:
+        """
+            Get the surrounding points
+        """
+        return [(point, self.grid[point]) for point in get_all_adjacent(point) if point in self]
