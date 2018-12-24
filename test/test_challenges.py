@@ -83,4 +83,9 @@ def test_day18():
     from challenge18 import GRID, transform_over_time, get_total_resource_value
     transform_over_time(GRID, 10)
     assert(get_total_resource_value(GRID) == 384416)
+
+def test_day19():
+    from challenge19 import get_actual_value
+    assert get_actual_value(875) == 1248
+    assert get_actual_value(10551275) == 14952912
     
