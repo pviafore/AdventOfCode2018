@@ -93,4 +93,9 @@ def test_day20():
     from challenge20 import CAVE
     assert CAVE.get_max_distance() == 3721
     assert CAVE.get_number_of_rooms_at_least_distance_away(1000) == 8613
+
+def test_day21():
+    from challenge21 import HALTING_NUMBERS
+    assert HALTING_NUMBERS[0] == 9566170
+    assert HALTING_NUMBERS[-1] == 13192622
     
