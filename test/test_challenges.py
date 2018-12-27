@@ -88,4 +88,9 @@ def test_day19():
     from challenge19 import get_actual_value
     assert get_actual_value(875) == 1248
     assert get_actual_value(10551275) == 14952912
+
+def test_day20():
+    from challenge20 import CAVE
+    assert CAVE.get_max_distance() == 3721
+    assert CAVE.get_number_of_rooms_at_least_distance_away(1000) == 8613
     

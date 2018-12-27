@@ -2,7 +2,7 @@
     Advent of Code Day 7
 """
 from itertools import count
-from common.graph import DAG
+from common.graph import Graph
 from common.input_file import get_transformed_input
 
 def get_steps(step_string):
@@ -16,7 +16,7 @@ def create_graph(steps):
     """
         Create a DAG from the steps
     """
-    graph = DAG()
+    graph = Graph()
     for source, dest in steps:
         graph.add_edge(source, dest)
     return graph
