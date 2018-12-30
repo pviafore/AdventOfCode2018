@@ -85,6 +85,14 @@ class Grid(abc.MutableMapping):
         return self.all_points_in_rectangle[key]
 
     def __setitem__(self, key: Point, value):
+        if key.x >= self.right:
+            self.right = key.x
+        if key.x <= self.left:
+            self.left = key.x
+        if key.y >= self.bottom:
+            self.bottom = key.y
+        if key.y <= self.top:
+            self.top = key.y
         self.all_points_in_rectangle[key] = value
 
     def __delitem__(self, key: Point):
@@ -118,6 +126,15 @@ class Grid(abc.MutableMapping):
             Get all points matching a function
         """
         return [(p, v) for p, v in self.all_points_in_rectangle.items() if func(p, v)]
+
+    def get_bounded_points(self, top_left: Point, bottom_right: Point) -> List[Tuple[Point, Any]]:
+        """
+            Return a list of points in a sub-rectangle
+        """
+        def in_rectangle(point: Point, _) -> bool:
+            return (point.x >= top_left.x and point.x <= bottom_right.x
+                    and point.y >= top_left.y and point.y <= bottom_right.y)
+        return self.get_matching_points(in_rectangle)
 
 
 def to_bounded_grid(points: Iterable[Point], fill_func=lambda _: None, padding=(0, 0)) -> Grid:

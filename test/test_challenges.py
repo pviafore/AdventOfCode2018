@@ -98,4 +98,9 @@ def test_day21():
     from challenge21 import HALTING_NUMBERS
     assert HALTING_NUMBERS[0] == 9566170
     assert HALTING_NUMBERS[-1] == 13192622
+
+def test_day22():
+    from challenge22 import CAVE, get_fewest_minutes
+    assert CAVE.get_total_risk_level() == 11810
+    assert get_fewest_minutes(CAVE) == 1015
     

@@ -15,7 +15,7 @@ def get_halting_numbers() -> Iterable[int]:
         e_reg += (d_reg & 255)
         e_reg *= 65899
         e_reg = e_reg & 0xFFFFFF
-        if d_reg < 256 :
+        if d_reg < 256:
             if e_reg in seen:
                 break
             seen.add(e_reg)
@@ -29,4 +29,3 @@ HALTING_NUMBERS = list(get_halting_numbers())
 
 if __name__ == "__main__":
     print(HALTING_NUMBERS[0], HALTING_NUMBERS[-1])
-
