@@ -17,11 +17,11 @@ def to_point(point_str: str):
     x, y = point_str.split(", ")
     return Point(int(x), int(y))
 
-def get_manhattan_distance(point1: Point, point2: Point):
+def get_manhattan_distance(point1: Sequence[int], point2: Sequence[int]):
     """
         Get manhattan distance between two points
     """
-    return abs(point1.x - point2.x) + abs(point1.y - point2.y)
+    return sum(abs(p1 - p2) for p1, p2 in zip(point1, point2))
 
 def is_equidistant(source: Point, point2: Point, point3: Point) -> bool:
     """
