@@ -8,7 +8,7 @@ from common.grid import get_manhattan_distance
 from common.input_file import get_transformed_input
 
 Star = Tuple[int, int, int, int]
-def to_4d_point(point_str: str): 
+def to_4d_point(point_str: str):
     """
         Get a 4 dimensional point from the string
     """

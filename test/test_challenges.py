@@ -108,4 +108,8 @@ def test_day24():
     from challenge24 import ARMIES, get_result_of_war, get_lowest_boost
     assert get_result_of_war(ARMIES) == 22083
     assert get_lowest_boost(ARMIES) == 8975
+
+def test_day25():
+    from challenge25 import STARS, get_constellations
+    assert len(get_constellations(STARS)) == 377
     
