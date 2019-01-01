@@ -103,4 +103,9 @@ def test_day22():
     from challenge22 import CAVE, get_fewest_minutes
     assert CAVE.get_total_risk_level() == 11810
     assert get_fewest_minutes(CAVE) == 1015
+
+def test_day24():
+    from challenge24 import ARMIES, get_result_of_war, get_lowest_boost
+    assert get_result_of_war(ARMIES) == 22083
+    assert get_lowest_boost(ARMIES) == 8975
     
