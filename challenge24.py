@@ -202,5 +202,7 @@ def get_lowest_boost(armies: List[str]):
     raise RuntimeError("Should not be possible to get here")
 
 ARMIES = read_strings("input/input24.txt")
-print(get_result_of_war(ARMIES))
-print(get_lowest_boost(ARMIES))
+
+if __name__ == "__main__":
+    print(get_result_of_war(ARMIES))
+    print(get_lowest_boost(ARMIES))
